@@ -32,6 +32,7 @@ export const SUPPORTED_RESOLUTIONS = ["480p", "720p", "1080p"];
 export const DURATION_RANGES = {
   "1.5": { min: 2, max: 12 },
   "2.0": { min: 4, max: 15 },
+  "2.5": { min: 3, max: 15 },
 };
 
 // Cinematic preset configurations
