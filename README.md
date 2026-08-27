@@ -34,33 +34,61 @@ The BytePlus Video Agent is a Hollywood-grade video generation system that turns
 git clone https://github.com/josephcrown920/Byteplusvidagent.git
 cd Byteplusvidagent
 
-# Install (no external dependencies required!)
-npm link  # Optional: makes `vidagent` command available globally
-
 # Set your API key
 export ARK_API_KEY="your-api-key-here"
+
+# Start the web server + UI
+npm start
+# or: node src/server/index.js
+
+# Open in your browser
+# 🌐 UI:  http://localhost:3000
+# 📡 API: http://localhost:3000/api/status
 ```
 
-### Quick CLI Usage
+**Zero dependencies required!** No `npm install` needed — everything uses native Node.js.
+
+## 🌐 Web UI
+
+The easiest way to use the Video Agent is through the web interface:
+
+```bash
+npm start
+# 🌐 Open http://localhost:3000 in your browser
+```
+
+**UI Features:**
+- 🎨 **Image Generator** — Seedream with model selection (4.0/4.5/5.0)
+- 🎥 **Video Generator** — Seedance with 5 cinematic presets
+- 🎞️ **Multi-Shot** — Sequences of multiple video shots
+- 📝 **Drafts** — Save, duplicate, and manage generation ideas
+- 📖 **Production Bible** — Characters, style, scenes, narrative
+- ⚡ **Tasks** — Monitor generation progress with auto-refresh
+- 🔧 **Pipeline** — Full concept→storyboard→video workflow
+
+## 💻 CLI Usage
 
 ```bash
 # Generate an image (dry-run preview first)
-vidagent image generate --prompt "A cinematic mountain landscape at golden hour" --version 5.0
+node src/cli/index.js image generate --prompt "A cinematic mountain landscape at golden hour" --version 5.0
 
 # Generate for real (add --confirmed)
-vidagent image generate --prompt "A cinematic mountain landscape at golden hour" --version 5.0 --confirmed
+node src/cli/index.js image generate --prompt "A cinematic mountain landscape at golden hour" --version 5.0 --confirmed
 
 # Generate a video (dry-run preview)
-vidagent video generate --prompt "Slow dolly shot through a neon city at night" --preset cinematic-wide
+node src/cli/index.js video generate --prompt "Slow dolly shot through a neon city at night" --preset cinematic-wide
 
 # Generate for real
-vidagent video generate --prompt "Slow dolly shot through a neon city at night" --preset cinematic-wide --confirmed
+node src/cli/index.js video generate --prompt "Slow dolly shot through a neon city at night" --preset cinematic-wide --confirmed
 
 # List cinematic presets
-vidagent presets
+node src/cli/index.js presets
 
 # Show production bible status
-vidagent bible show
+node src/cli/index.js bible show
+
+# Run the quickstart verification
+node scripts/quickstart.js
 ```
 
 ## 🎛️ Cinematic Presets
@@ -136,12 +164,64 @@ await pipeline.generateStoryboard("scene-1", shots);
 await pipeline.generateVideo("scene-1", "main", "...");
 ```
 
+## 📡 REST API
+
+All functionality is available via a REST API:
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/status` | GET | Server status and API key check |
+| `/api/image/generate` | POST | Generate an image with Seedream |
+| `/api/image/series` | POST | Generate a series of images |
+| `/api/image/presets` | GET | Available image presets and options |
+| `/api/video/generate` | POST | Generate a video with Seedance |
+| `/api/video/multishot` | POST | Generate multiple video shots |
+| `/api/video/tasks` | GET | List all active tasks |
+| `/api/video/tasks/:id` | GET | Poll a specific task |
+| `/api/video/presets` | GET | Available video presets |
+| `/api/drafts` | GET/POST | List or create drafts |
+| `/api/drafts/:id` | GET/PUT/DELETE | Get, update, or delete a draft |
+| `/api/drafts/:id/duplicate` | POST | Duplicate a draft |
+| `/api/drafts/:id/submit` | POST | Mark draft as submitted |
+| `/api/bible` | GET | Full bible summary |
+| `/api/bible/characters` | GET/POST | List or add characters |
+| `/api/bible/style` | GET/POST | Get or set style |
+| `/api/bible/scenes` | GET/POST | List or add scenes |
+| `/api/bible/narrative` | GET/POST | Get or set narrative |
+| `/api/bible/references` | GET | List references |
+| `/api/bible/check` | POST | Continuity check |
+| `/api/bible/build-prompt` | POST | Build enhanced prompt |
+| `/api/pipeline/init` | POST | Initialize production pipeline |
+| `/api/pipeline/concept` | POST | Generate concept art |
+| `/api/pipeline/character` | POST | Generate character design |
+| `/api/pipeline/storyboard` | POST | Generate storyboard frames |
+| `/api/pipeline/video` | POST | Generate video via pipeline |
+| `/api/pipeline/scene` | POST | Run full scene pipeline |
+| `/api/pipeline/status` | GET | Pipeline status |
+
+**Example API call:**
+```bash
+curl -X POST http://localhost:3000/api/image/generate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"A cinematic landscape","version":"5.0","confirmed":true}'
+```
+
 ## 📁 Project Structure
 
 ```
 Byteplusvidagent/
 ├── src/
-│   ├── cli/index.js              # CLI entry point (vidagent command)
+│   ├── cli/index.js              # CLI entry point
+│   ├── server/
+│   │   ├── index.js              # Server startup
+│   │   ├── server.js             # HTTP server + router
+│   │   ├── static.js             # Static file serving
+│   │   └── routes/
+│   │       ├── image-routes.js   # Image generation API
+│   │       ├── video-routes.js   # Video generation API (incl. multishot)
+│   │       ├── pipeline-routes.js # Pipeline API
+│   │       ├── bible-routes.js   # Production Bible API
+│   │       └── draft-routes.js   # Drafts API
 │   ├── core/
 │   │   ├── config.js             # Configuration, presets, constants
 │   │   ├── seedream-client.js    # Seedream image generation API client
@@ -150,7 +230,13 @@ Byteplusvidagent/
 │   │   └── cinematic-pipeline.js # Full production pipeline orchestration
 │   ├── bible/
 │   │   └── production-bible.js   # Continuity and production bible system
+│   ├── drafts/
+│   │   └── draft-manager.js      # Draft saving and management
 │   └── index.js                  # Main library entry point
+├── public/
+│   ├── index.html                # Web UI
+│   ├── styles.css                # UI styles
+│   └── app.js                    # UI logic
 ├── examples/
 │   ├── basic-image.js            # Simple image generation example
 │   ├── basic-video.js            # Simple video generation example
@@ -160,10 +246,12 @@ Byteplusvidagent/
 │   ├── videos/                   # Generated videos
 │   └── vfx/                      # VFX elements
 ├── production-bible/             # Production bible JSON files
+├── drafts/                       # Saved generation drafts
 ├── deliverables/                 # Final deliverables
 ├── reports/                      # Continuity reports and logs
-├── scripts/                      # Utility scripts
-├── docs/                         # Documentation
+├── scripts/
+│   ├── quickstart.js             # Setup verification script
+│   └── scenes/scene-template.json
 └── package.json
 ```
 
