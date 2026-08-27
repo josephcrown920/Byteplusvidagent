@@ -19,8 +19,10 @@ export class SeedanceClient {
   }
 
   _getCapabilityVersion(model, version) {
+    if (model.includes("seedance-2-5")) return "2.5";
     if (model.includes("seedance-2-0")) return "2.0";
-    if (version.startsWith("2.0")) return "2.0";
+    if (model.includes("dreamina-seedance-2")) return "2.0";
+    if (version.startsWith("2.")) return "2.0";
     return "1.5";
   }
 
