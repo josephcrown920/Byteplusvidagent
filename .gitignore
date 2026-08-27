@@ -11,6 +11,10 @@ pnpm-lock.yaml
 *.key
 *.pem
 
+# Drafts
+drafts/
+!drafts/.gitkeep
+
 # Generated assets
 assets/images/*
 assets/videos/*

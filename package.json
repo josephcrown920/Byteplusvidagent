@@ -8,11 +8,15 @@
     "vidagent": "src/cli/index.js"
   },
   "scripts": {
-    "start": "node src/cli/index.js",
+    "start": "node src/server/index.js",
+    "server": "node src/server/index.js",
+    "dev": "node src/server/index.js",
+    "cli": "node src/cli/index.js",
     "image": "node src/cli/index.js image",
     "video": "node src/cli/index.js video",
     "pipeline": "node src/cli/index.js pipeline",
-    "bible": "node src/cli/index.js bible"
+    "bible": "node src/cli/index.js bible",
+    "quickstart": "node scripts/quickstart.js"
   },
   "keywords": [
     "byteplus",

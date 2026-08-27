@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BytePlus Video Agent — Cinematic AI Studio</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🎬</span>
+        <div>
+          <h1>BytePlus Video Agent</h1>
+          <p class="tagline">Cinematic AI Production Studio</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="api-status" class="status-badge status-loading">● Connecting...</span>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="generate">🎬 Generate</button>
+      <button class="nav-btn" data-tab="multishot">🎞️ Multi-Shot</button>
+      <button class="nav-btn" data-tab="drafts">📝 Drafts</button>
+      <button class="nav-btn" data-tab="bible">📖 Bible</button>
+      <button class="nav-btn" data-tab="tasks">⚡ Tasks</button>
+      <button class="nav-btn" data-tab="pipeline">🔧 Pipeline</button>
+    </nav>
+
+    <main class="main-content">
+
+      <!-- GENERATE TAB -->
+      <section id="tab-generate" class="tab-content active">
+        <div class="grid-2">
+          <div class="panel">
+            <h2>🎨 Image Generation</h2>
+            <p class="panel-desc">Generate photorealistic images with Seedream</p>
+
+            <div class="form-group">
+              <label>Prompt</label>
+              <textarea id="img-prompt" rows="3" placeholder="Describe the image you want to generate..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Model Version</label>
+                <select id="img-version">
+                  <option value="5.0">Seedream 5.0 (Latest)</option>
+                  <option value="4.5">Seedream 4.5</option>
+                  <option value="4.0">Seedream 4.0 (Default)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Size</label>
+                <select id="img-size">
+                  <option value="2K">2K</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Seed (optional)</label>
+                <input type="number" id="img-seed" placeholder="Random">
+              </div>
+              <div class="form-group">
+                <label>Output Format</label>
+                <select id="img-format">
+                  <option value="">Default</option>
+                  <option value="png">PNG (5.0 only)</option>
+                  <option value="jpeg">JPEG (5.0 only)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="btn-img-dry" class="btn btn-secondary">Dry Run</button>
+              <button id="btn-img-gen" class="btn btn-primary">✨ Generate Image</button>
+            </div>
+
+            <div id="img-result" class="result-area hidden">
+              <h3>Result</h3>
+              <div id="img-output"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>🎥 Video Generation</h2>
+            <p class="panel-desc">Generate cinematic video with Seedance</p>
+
+            <div class="form-group">
+              <label>Prompt</label>
+              <textarea id="vid-prompt" rows="3" placeholder="Describe the video you want to generate..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Preset</label>
+                <select id="vid-preset">
+                  <option value="">Custom</option>
+                  <option value="cinematic-wide">🎬 Cinematic Wide (21:9, 8s)</option>
+                  <option value="theatrical">🎞️ Theatrical (16:9, 10s)</option>
+                  <option value="social-portrait">📱 Social Portrait (9:16, 5s)</option>
+                  <option value="social-landscape">📱 Social Landscape (16:9, 5s)</option>
+                  <option value="storyboard">📐 Storyboard (16:9, 3s fast)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Model</label>
+                <select id="vid-version">
+                  <option value="2.0">Seedance 2.0 (Highest Quality)</option>
+                  <option value="1.5-pro">Seedance 1.5 Pro</option>
+                  <option value="2.0-fast">Seedance 2.0 Fast</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Aspect Ratio</label>
+                <select id="vid-ratio">
+                  <option value="16:9">16:9 (Widescreen)</option>
+                  <option value="9:16">9:16 (Portrait)</option>
+                  <option value="21:9">21:9 (Ultra-wide)</option>
+                  <option value="1:1">1:1 (Square)</option>
+                  <option value="4:3">4:3</option>
+                  <option value="2:1">2:1</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Duration (sec)</label>
+                <input type="number" id="vid-duration" value="5" min="2" max="15">
+              </div>
+              <div class="form-group">
+                <label>Resolution</label>
+                <select id="vid-resolution">
+                  <option value="1080p">1080p</option>
+                  <option value="720p">720p</option>
+                  <option value="480p">480p</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Frame URL (optional)</label>
+                <input type="text" id="vid-first-frame" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="checkbox-row">
+              <label><input type="checkbox" id="vid-audio"> Generate Audio</label>
+              <label><input type="checkbox" id="vid-nowait"> Submit Only (poll later)</label>
+            </div>
+
+            <div class="button-row">
+              <button id="btn-vid-dry" class="btn btn-secondary">Dry Run</button>
+              <button id="btn-vid-gen" class="btn btn-primary">🎬 Generate Video</button>
+            </div>
+
+            <div id="vid-result" class="result-area hidden">
+              <h3>Result</h3>
+              <div id="vid-output"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MULTISHOT TAB -->
+      <section id="tab-multishot" class="tab-content">
+        <div class="panel">
+          <h2>🎞️ Multi-Shot Video Generation</h2>
+          <p class="panel-desc">Create a sequence of video shots (e.g., a scene with multiple camera angles)</p>
+
+          <div class="form-group">
+            <label>Scene / Project Name</label>
+            <input type="text" id="ms-scene" placeholder="e.g., Opening Scene">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Default Duration</label>
+              <input type="number" id="ms-duration" value="5" min="2" max="15">
+            </div>
+            <div class="form-group">
+              <label>Default Ratio</label>
+              <select id="ms-ratio">
+                <option value="16:9">16:9</option>
+                <option value="21:9">21:9</option>
+                <option value="9:16">9:16</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Default Resolution</label>
+              <select id="ms-resolution">
+                <option value="1080p">1080p</option>
+                <option value="720p">720p</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Model</label>
+              <select id="ms-model">
+                <option value="2.0">Seedance 2.0</option>
+                <option value="1.5-pro">1.5 Pro</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="shots-container">
+            <div class="shot-item" data-shot="0">
+              <div class="shot-header">
+                <span class="shot-number">Shot 1</span>
+                <button class="btn btn-small btn-danger btn-rm-shot" data-idx="0">Remove</button>
+              </div>
+              <textarea class="shot-prompt" rows="2" placeholder="Describe this shot... e.g., Wide establishing shot of city skyline at night"></textarea>
+            </div>
+          </div>
+
+          <button id="btn-add-shot" class="btn btn-secondary">+ Add Shot</button>
+
+          <div class="button-row">
+            <button id="btn-ms-save-draft" class="btn btn-secondary">💾 Save as Draft</button>
+            <button id="btn-ms-generate" class="btn btn-primary">🎬 Generate All Shots</button>
+          </div>
+
+          <div id="ms-result" class="result-area hidden">
+            <h3>Multi-Shot Results</h3>
+            <div id="ms-output"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DRAFTS TAB -->
+      <section id="tab-drafts" class="tab-content">
+        <div class="panel">
+          <h2>📝 Drafts</h2>
+          <p class="panel-desc">Save and manage your generation ideas before committing to them</p>
+
+          <div class="drafts-toolbar">
+            <select id="draft-filter-type">
+              <option value="">All Types</option>
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+              <option value="multishot">Multi-Shot</option>
+              <option value="scene">Scene</option>
+            </select>
+            <select id="draft-filter-status">
+              <option value="">All Statuses</option>
+              <option value="draft">Draft</option>
+              <option value="submitted">Submitted</option>
+              <option value="completed">Completed</option>
+            </select>
+            <button id="btn-refresh-drafts" class="btn btn-small">🔄 Refresh</button>
+          </div>
+
+          <div id="drafts-list" class="drafts-list">
+            <p class="muted">Loading drafts...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BIBLE TAB -->
+      <section id="tab-bible" class="tab-content">
+        <div class="grid-2">
+          <div class="panel">
+            <h2>🎨 Style Bible</h2>
+            <div class="form-group">
+              <label>Overall Style</label>
+              <textarea id="bible-style-overall" rows="2" placeholder="e.g., cinematic cyberpunk, Blade Runner aesthetic"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Color Palette</label>
+                <input type="text" id="bible-style-palette" placeholder="neon cyan and magenta, deep blacks">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Lighting</label>
+                <input type="text" id="bible-style-lighting" placeholder="dramatic neon, volumetric fog">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Lens</label>
+                <input type="text" id="bible-style-lens" placeholder="anamorphic lens, 35mm">
+              </div>
+            </div>
+            <button id="btn-save-style" class="btn btn-primary">Save Style</button>
+          </div>
+
+          <div class="panel">
+            <h2>👤 Characters</h2>
+            <div id="char-list" class="char-list">
+              <p class="muted">No characters yet</p>
+            </div>
+
+            <h3 style="margin-top: 20px;">Add Character</h3>
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" id="char-name" placeholder="Character name">
+            </div>
+            <div class="form-group">
+              <label>Visual Description</label>
+              <textarea id="char-desc" rows="2" placeholder="Describe their appearance..."></textarea>
+            </div>
+            <button id="btn-add-char" class="btn btn-primary">Add Character</button>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top: 20px;">
+          <h2>📖 Bible Summary</h2>
+          <pre id="bible-summary" class="bible-summary">Loading...</pre>
+        </div>
+      </section>
+
+      <!-- TASKS TAB -->
+      <section id="tab-tasks" class="tab-content">
+        <div class="panel">
+          <h2>⚡ Active Tasks</h2>
+          <p class="panel-desc">Monitor your video generation tasks in real-time</p>
+          <div class="button-row">
+            <button id="btn-refresh-tasks" class="btn btn-secondary">🔄 Refresh</button>
+            <button id="btn-auto-refresh" class="btn btn-secondary">⏱️ Auto-Refresh: OFF</button>
+          </div>
+          <div id="tasks-list" class="tasks-list">
+            <p class="muted">No active tasks</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PIPELINE TAB -->
+      <section id="tab-pipeline" class="tab-content">
+        <div class="panel">
+          <h2>🔧 Production Pipeline</h2>
+          <p class="panel-desc">Full cinematic production: concept → storyboard → video</p>
+
+          <div class="form-group">
+            <label>Scene ID</label>
+            <input type="text" id="pipe-scene" placeholder="e.g., scene-1-opening">
+          </div>
+
+          <div class="form-group">
+            <label>Concept Art Prompt</label>
+            <textarea id="pipe-concept" rows="2" placeholder="Describe the overall scene..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Video Prompt</label>
+            <textarea id="pipe-video-prompt" rows="2" placeholder="Describe the video shot..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Duration</label>
+              <input type="number" id="pipe-duration" value="8">
+            </div>
+            <div class="form-group">
+              <label>Ratio</label>
+              <select id="pipe-ratio">
+                <option value="21:9">21:9</option>
+                <option value="16:9">16:9</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Resolution</label>
+              <select id="pipe-resolution">
+                <option value="1080p">1080p</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="btn-run-pipeline" class="btn btn-primary">🚀 Run Full Pipeline</button>
+
+          <div id="pipe-result" class="result-area hidden">
+            <h3>Pipeline Result</h3>
+            <div id="pipe-output"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Toast notifications -->
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

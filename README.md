@@ -6,14 +6,19 @@ The BytePlus Video Agent is a Hollywood-grade video generation system that turns
 
 ## ✨ Features
 
+- **🌐 Web UI** — Beautiful dark-mode interface for all generation controls
+- **⚡ REST API** — Full API for integration into your own apps
 - **🎨 Seedream Image Generation** — Photorealistic concept art, character designs, storyboard frames
 - **🎥 Seedance Video Generation** — Cinematic video clips with multiple model versions (1.5 Pro, 2.0, 2.0 Fast)
+- **🎞️ Multi-Shot Generation** — Create sequences of shots for full scenes
+- **📝 Drafts System** — Save, duplicate, and manage generation ideas before committing
 - **📖 Production Bible** — Built-in continuity system for character, style, scene, and narrative consistency
 - **🎬 Cinematic Presets** — Ready-to-use presets for different formats (cinematic wide, theatrical, social, storyboard)
 - **🔄 Full Pipeline** — Script → Concept Art → Storyboard → Video → Deliverables
 - **💻 CLI Tool** — Command-line interface for quick generation and pipeline management
 - **📦 Node.js Library** — Full programmatic API for integration into your own projects
 - **📁 Organized Output** — Standardized asset directory structure
+- **🚫 Zero Dependencies** — Pure Node.js + native fetch, no npm install needed
 
 ## 🚀 Quick Start
 
